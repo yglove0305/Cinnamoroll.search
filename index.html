@@ -1,1 +1,130 @@
-<!DOCTYPE html> <html lang="ko"> <head> <meta charset="UTF-8"> <title>시나모롤 검색기 - DuckDuckGo JSON</title> <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet"> <style> body { font-family: 'Jua', sans-serif; background: linear-gradient(to bottom, #e0f7fa, #fffafc); background-image: url(''); background-size: cover; background-attachment: fixed; text-align: center; margin: 0; padding: 0; } .container { margin-top: 100px; background: rgba(255,255,255,0.85); padding: 40px; border-radius: 30px; max-width: 600px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); } h1 { color: #61a1f2; } input { padding: 15px; width: 70%; border-radius: 25px; border: 2px solid #61a1f2; font-size: 18px; outline: none; } button { padding: 12px 25px; margin-top: 10px; font-size: 18px; border-radius: 25px; border: none; background: #f7a6d3; color: white; cursor: pointer; } .results { margin-top: 30px; background: rgba(255,255,255,0.95); border-radius: 20px; padding: 20px; text-align: left; } .results a { color: #0077cc; text-decoration: none; } .results a:hover { text-decoration: underline; } </style> </head> <body> <div class="container"> <img src="https://i.pinimg.com/originals/41/72/90/417290cf6867f6f3bca8369127dc8104.jpg" width="150" alt="시나모롤"> <h1>시나모롤 검색기</h1> <form id="searchForm"> <input type="text" id="searchInput" placeholder="검색어 입력..." required> <br> <button type="submit">검색</button> </form> <div id="results" class="results"></div> </div> <script> document.getElementById("searchForm").addEventListener("submit", function(e) { e.preventDefault(); const query = document.getElementById("searchInput").value; const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1`; document.getElementById("results").innerHTML = "🔍 검색 중입니다..."; fetch(apiUrl) .then(res => res.json()) .then(data => { const container = document.getElementById("results"); container.innerHTML = ""; if (data.Abstract) { container.innerHTML += ` <h2>${data.Heading}</h2> <p>${data.Abstract}</p> <p><a href="${data.AbstractURL}" target="_blank">🔗 더 알아보기</a></p> `; if (data.Image) { container.innerHTML += `<img src="${data.Image}" alt="이미지">`; } } else { container.innerHTML = `<p></p>`; } // 관련 주제 출력 (옵션) if (data.RelatedTopics && data.RelatedTopics.length > 0) { container.innerHTML += "<h3>📚 관련 주제</h3>"; data.RelatedTopics.slice(0, 5).forEach(topic => { if (topic.Text && topic.FirstURL) { container.innerHTML += ` <p><a href="${topic.FirstURL}" target="_blank">${topic.Text}</a></p> `; } }); } }) .catch(error => { console.error(error); document.getElementById("results").innerHTML = "⚠️ 오류가 발생했어요!"; }); }); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>시나모롤 검색기 - DuckDuckGo JSON</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Jua', sans-serif;
+      background: linear-gradient(to bottom, #e0f7fa, #fffafc);
+      background-image: url('');
+      background-size: cover;
+      background-attachment: fixed;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin-top: 100px;
+      background: rgba(255,255,255,0.85);
+      padding: 40px;
+      border-radius: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #61a1f2;
+    }
+
+    input {
+      padding: 15px;
+      width: 70%;
+      border-radius: 25px;
+      border: 2px solid #61a1f2;
+      font-size: 18px;
+      outline: none;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin-top: 10px;
+      font-size: 18px;
+      border-radius: 25px;
+      border: none;
+      background: #f7a6d3;
+      color: white;
+      cursor: pointer;
+    }
+
+    .results {
+      margin-top: 30px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: left;
+    }
+
+    .results a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    .results a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://i.pinimg.com/originals/41/72/90/417290cf6867f6f3bca8369127dc8104.jpg" width="150" alt="시나모롤">
+    <h1>시나모롤 검색기</h1>
+    <form id="searchForm">
+      <input type="text" id="searchInput" placeholder="검색어 입력..." required>
+      <br>
+      <button type="submit">검색</button>
+    </form>
+    <div id="results" class="results"></div>
+  </div>
+
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const query = document.getElementById("searchInput").value;
+      const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1`;
+
+      document.getElementById("results").innerHTML = "🔍 검색 중입니다...";
+
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("results");
+          container.innerHTML = "";
+
+          if (data.Abstract) {
+            container.innerHTML += `
+              <h2>${data.Heading}</h2>
+              <p>${data.Abstract}</p>
+              <p><a href="${data.AbstractURL}" target="_blank">🔗 더 알아보기</a></p>
+            `;
+            if (data.Image) {
+              container.innerHTML += `<img src="${data.Image}" alt="이미지">`;
+            }
+          } else {
+            container.innerHTML = `<p></p>`;
+          }
+
+          // 관련 주제 출력 (옵션)
+          if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+            container.innerHTML += "<h3>📚 관련 주제</h3>";
+            data.RelatedTopics.slice(0, 5).forEach(topic => {
+              if (topic.Text && topic.FirstURL) {
+                container.innerHTML += `
+                  <p><a href="${topic.FirstURL}" target="_blank">${topic.Text}</a></p>
+                `;
+              }
+            });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById("results").innerHTML = "⚠️ 오류가 발생했어요!";
+        });
+    });
+  </script>
+</body>
+</html>
